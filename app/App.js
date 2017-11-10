@@ -1,0 +1,31 @@
+import React,{Component} from 'react'
+import { AsyncStorage } from 'react-native'
+import { View, Text } from 'react-native'
+import { persistStore,autoRehydrate } from 'redux-persist'
+
+import dva from './utils/dva'
+import Router from './router'
+
+import appModel from './models/app'
+import routerModel from './models/router'
+
+const app = dva({
+  initialState: {},
+  models: [appModel, routerModel],
+  extraEnhancers: [autoRehydrate()],
+  onError(e) {
+    console.log('onError', e)
+  },
+})
+
+const App = app.start(<Router />)
+persistStore(app.getStore(), {
+  storage: AsyncStorage,
+  blacklist: ['router'],
+})
+
+
+
+
+export default App
+
